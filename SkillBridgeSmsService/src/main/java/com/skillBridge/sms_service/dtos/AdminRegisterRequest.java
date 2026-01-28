@@ -1,0 +1,33 @@
+package com.skillBridge.sms_service.dtos;
+
+import java.util.Set;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class AdminRegisterRequest {
+	
+	@NotBlank
+	private String name;
+	
+	@Email
+	@NotBlank
+	private String email;
+	
+	@NotBlank
+	@Size(min=6)
+	private String password;
+	
+	@NotBlank
+	private String course;
+	
+	@NotEmpty
+	private Set<String> skills;
+	
+}
