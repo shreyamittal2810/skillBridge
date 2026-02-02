@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,7 +17,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "applications")
+@Table(
+	    name = "applications",
+	    uniqueConstraints = {
+	        @UniqueConstraint(columnNames = {"projectId", "senderId"})
+	    }
+	)
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,12 +38,12 @@ public class Application extends BaseEntity {
     private Long projectId;
 
     @NotNull(message = "Sender ID is required")
-    private Long senderId;
+    private Long studentId;
 
     @NotBlank(message = "Message cannot be empty")
     @Size(max = 500)
-    private String messageText;
+    private String message;
 
     @Enumerated(EnumType.STRING)
-    private ApplicationStatus applicationStatus = ApplicationStatus.PENDING;
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 }

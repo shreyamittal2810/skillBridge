@@ -1,11 +1,12 @@
 package com.skillBridge.sms_service.service.impl;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.skillBridge.sms_service.dtos.StudentRegisterRequest;
 import com.skillBridge.sms_service.dtos.StudentResponse;
@@ -152,5 +153,15 @@ public class StudentServiceImpl implements StudentService {
 
         return student;
     }
+
+	@Override
+	public void assertStudentExists(Long id) {
+		if (!studentRepository.existsById(id)) {
+	        throw new ResponseStatusException(
+	            HttpStatus.NOT_FOUND,
+	            "Student not found"
+	        );
+	    }
+	}
 
 }

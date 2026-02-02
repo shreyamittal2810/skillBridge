@@ -34,12 +34,13 @@ public class JwtUtils {
         return Jwts.builder()
                 .subject(email)
                 .claim("studentId", studentId)
-                .claim("roles", List.of("ROLE_"+ role))
+                .claim("role", role)   // ✅ FIXED (single role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
                 .compact();
     }
+
 
     // ✅ VALIDATE TOKEN
     public Claims validate(String token) {

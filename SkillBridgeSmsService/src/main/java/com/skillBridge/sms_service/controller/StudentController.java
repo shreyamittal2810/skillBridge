@@ -44,18 +44,25 @@ public class StudentController {
 
     // READ ONE
     @GetMapping("/info")
-    public ResponseEntity<StudentResponse> get(@RequestHeader("X-User-Id") Long studentId) {
+    public ResponseEntity<StudentResponse> get(@RequestHeader("X-USER-ID") Long studentId) {
         
     	
     	return ResponseEntity.ok(studentService.get(studentId));
     }
+    
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<Void> studentExists(@PathVariable Long id) {
+        studentService.assertStudentExists(id);
+        return ResponseEntity.ok().build();
+    }
+
 
     // READ ALL
 
     // UPDATE FULL
     @PutMapping("/update")
     public ResponseEntity<StudentResponse> update(
-            @RequestHeader("X-User-Id") Long id,
+            @RequestHeader("X-USER-ID") Long id,
             @Valid @RequestBody StudentRegisterRequest request
     ) {
         return ResponseEntity.ok(studentService.update(id, request));
@@ -64,7 +71,7 @@ public class StudentController {
     // UPDATE PARTIAL
     @PatchMapping("/patch")
     public ResponseEntity<StudentResponse> patch(
-            @RequestHeader("X-User-Id") Long id,
+            @RequestHeader("X-USER-ID") Long id,
             @RequestBody StudentUpdateRequest request
     ) {
         return ResponseEntity.ok(studentService.patch(id, request));
@@ -72,7 +79,7 @@ public class StudentController {
 
     // DELETE
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> delete(@RequestHeader("X-User-Id") Long id) {
+    public ResponseEntity<Void> delete(@RequestHeader("X-USER-IDO") Long id) {
         studentService.delete(id);
         return ResponseEntity.noContent().build();
     }

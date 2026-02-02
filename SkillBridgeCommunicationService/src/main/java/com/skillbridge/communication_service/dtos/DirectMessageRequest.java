@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 public class DirectMessageRequest {
 
-    @NotNull(message = "Sender student ID is required")
-    private Long senderStudentId;
+    
 
     @NotNull(message = "Receiver student ID is required")
     private Long receiverStudentId;

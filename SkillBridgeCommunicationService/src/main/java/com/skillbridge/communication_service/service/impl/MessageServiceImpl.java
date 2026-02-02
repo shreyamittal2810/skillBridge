@@ -3,62 +3,35 @@ package com.skillbridge.communication_service.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.skillbridge.communication_service.client.ProjectClient;
+import com.skillbridge.communication_service.client.StudentClient;
 import com.skillbridge.communication_service.entities.DirectMessage;
-import com.skillbridge.communication_service.entities.ProjectMessage;
 import com.skillbridge.communication_service.exception.ResourceNotFoundException;
 import com.skillbridge.communication_service.repository.DirectMessageRepository;
-import com.skillbridge.communication_service.repository.ProjectMessageRepository;
 import com.skillbridge.communication_service.service.MessageService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MessageServiceImpl implements MessageService {
 
-    private final ProjectMessageRepository projectMessageRepository;
+  
     private final DirectMessageRepository directMessageRepository;
-
-    // ---------------- Project Chat ----------------
-
-    @Override
-    public ProjectMessage sendProjectMessage(ProjectMessage message) {
-        return projectMessageRepository.save(message);
-    }
-
-    @Override
-    public List<ProjectMessage> getProjectMessages(Long projectId) {
-        return projectMessageRepository.findByProjectIdOrderByCreatedAtAsc(projectId);
-    }
-    
-    @Override
-    public ProjectMessage getProjectMessageById(Long id) {
-        return projectMessageRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Project message not found with id: " + id));
-    }
+    private final StudentClient studentClient;
+    private final ProjectClient projectClient;
 
 
-    @Override
-    public ProjectMessage updateProjectMessage(Long id, String newMessage) {
-        ProjectMessage message = getProjectMessageById(id);
-        message.setMessage(newMessage);
-        return projectMessageRepository.save(message);
-    }
+    // ================= PROJECT CHAT =================
 
-    @Override
-    public void deleteProjectMessage(Long id) {
-        projectMessageRepository.deleteById(id);
-    }
+  
 
-
-    // ---------------- Direct Chat ----------------
+    // ================= DIRECT CHAT =================
 
     @Override
     public DirectMessage sendDirectMessage(DirectMessage message) {
+        validateDirectMessage(message);
         return directMessageRepository.save(message);
     }
 
@@ -66,29 +39,78 @@ public class MessageServiceImpl implements MessageService {
     public List<DirectMessage> getDirectMessagesForStudent(Long studentId) {
         return directMessageRepository
                 .findBySenderStudentIdOrReceiverStudentIdOrderByCreatedAtAsc(
-                        studentId,
-                        studentId
+                        studentId, studentId
                 );
-    }
-    
-    @Override
-    public DirectMessage getDirectMessageById(Long id) {
-        return directMessageRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Direct message not found with id: " + id));
     }
 
     @Override
-    public DirectMessage updateDirectMessage(Long id, String newMessage) {
+    public DirectMessage getDirectMessageById(Long id) {
+        return directMessageRepository.findById(id)
+            .orElseThrow(() ->
+                new ResourceNotFoundException(
+                    "Direct message not found with id: " + id
+                )
+            );
+    }
+
+
+
+    @Override
+    public DirectMessage updateDirectMessage(Long id, Long studentId, String newMessage) {
         DirectMessage message = getDirectMessageById(id);
+
+        verifySender(message.getSenderStudentId(), studentId);
+        validateMessageContent(newMessage);
+
         message.setMessage(newMessage);
         return directMessageRepository.save(message);
     }
 
     @Override
-    public void deleteDirectMessage(Long id) {
-        directMessageRepository.deleteById(id);
+    public void deleteDirectMessage(Long id, Long studentId) {
+        DirectMessage message = getDirectMessageById(id);
+        verifySender(message.getSenderStudentId(), studentId);
+        directMessageRepository.delete(message);
     }
-    
-    
+
+    // ================= VALIDATION HELPERS =================
+
+    private void verifySender(Long actualSenderId, Long requesterId) {
+        if (!actualSenderId.equals(requesterId)) {
+            throw new RuntimeException("Unauthorized operation");
+        }
+    }
+
+    private void validateMessageContent(String content) {
+        if (content == null || content.isBlank()) {
+            throw new IllegalArgumentException("Message content cannot be empty");
+        }
+    }
+
+   
+    private void validateDirectMessage(DirectMessage message) {
+
+        if (message.getSenderStudentId() == null) {
+            throw new IllegalArgumentException("Sender ID is required");
+        }
+
+        if (message.getReceiverStudentId() == null) {
+            throw new IllegalArgumentException("Receiver ID is required");
+        }
+        if (message.getSenderStudentId().equals(message.getReceiverStudentId())) {
+            throw new IllegalArgumentException(
+                "Sender and receiver cannot be the same"
+            );
+        }
+        if (!studentClient.studentExists(message.getReceiverStudentId())) {
+            throw new ResourceNotFoundException(
+                "Receiver student does not exist: " + message.getReceiverStudentId()
+            );
+        }
+
+        validateMessageContent(message.getMessage());
+    }
+
+
+
 }

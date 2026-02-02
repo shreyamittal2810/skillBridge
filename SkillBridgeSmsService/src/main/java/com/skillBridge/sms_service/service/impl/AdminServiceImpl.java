@@ -7,11 +7,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.skillBridge.sms_service.dtos.AdminRegisterRequest;
+import com.skillBridge.sms_service.dtos.ProjectResponse;
 import com.skillBridge.sms_service.dtos.StudentResponse;
+import com.skillBridge.sms_service.entities.ProjectStatus;
 import com.skillBridge.sms_service.entities.Role;
 import com.skillBridge.sms_service.entities.Skill;
 import com.skillBridge.sms_service.entities.Student;
 import com.skillBridge.sms_service.entities.StudentSkill;
+import com.skillBridge.sms_service.repository.ProjectRepository;
 import com.skillBridge.sms_service.repository.StudentRepository;
 import com.skillBridge.sms_service.service.AdminService;
 
@@ -25,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminServiceImpl implements AdminService {
 	
 	private final StudentRepository studentRepository;
+	private final ProjectRepository projectRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
@@ -72,5 +76,81 @@ public class AdminServiceImpl implements AdminService {
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
 	}
+
+	@Override
+	public StudentResponse getById(Long id) {
+		Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Student not found"));
+
+        return mapToResponse(student);
+	}
+
+	@Override
+	public void updateRole(Long id, Role role) {
+		Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Student not found"));
+
+        student.setRole(role);
+        studentRepository.save(student);
+		
+	}
+
+	@Override
+	public void delete(Long id) {
+		Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Student not found"));
+
+        studentRepository.delete(student);
+	}
+	private ProjectResponse mapToProjectResponse(com.skillBridge.sms_service.entities.Project project) {
+	    return ProjectResponse.builder()
+	            .projectId(project.getProjectId())
+	            .title(project.getTitle())
+	            .description(project.getDescription())
+	            .status(project.getStatus())
+	            .createdBy(project.getCreatedBy())
+	            .requiredSkills(
+	                    project.getRequiredSkills()
+	                            .stream()
+	                            .map(prs -> prs.getSkill().name())
+	                            .collect(Collectors.toSet())
+	            )
+	            .build();
+	}
+
+
+	@Override
+	public List<ProjectResponse> getAllProjects() {
+		return projectRepository.findAll()
+	            .stream()
+	            .map(this::mapToProjectResponse)
+	            .toList();
+	}
+
+	@Override
+	public ProjectResponse updateProjectStatus(Long projectId, ProjectStatus status) {
+
+	    var project = projectRepository.findById(projectId)
+	            .orElseThrow(() -> new IllegalStateException(
+	                    "Project not found with id: " + projectId
+	            ));
+
+	    project.setStatus(status);
+
+	    return mapToProjectResponse(projectRepository.save(project));
+	}
+
+
+	@Override
+	public void deleteProject(Long projectId) {
+
+	    var project = projectRepository.findById(projectId)
+	            .orElseThrow(() -> new IllegalStateException(
+	                    "Project not found with id: " + projectId
+	            ));
+
+	    projectRepository.delete(project);
+	}
+
 
 }

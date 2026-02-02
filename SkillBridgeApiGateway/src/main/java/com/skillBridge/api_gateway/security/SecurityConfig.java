@@ -9,61 +9,36 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import lombok.RequiredArgsConstructor;
-//import static org.springframework.security.config.web.server.ServerHttpSecurity.
 
-//Java configuration class
-@Configuration 
-/*
- * Enables Spring Security WebFlux support to a Configuration class.
- * Can then create here ServerHttpSecurity Bean instance (equivalent to HttpSecurity) 
- * Enables reactive Spring Security 
- */
-
+@Configuration
 @EnableWebFluxSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final CustomJwtFilter customJwtFilter;
+
+    private final CustomJwtFilter customJwtFilter;
 
     @Bean
-     SecurityWebFilterChain securityWebFilterChain(
-            ServerHttpSecurity http
-            ) {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 
-        return 
-        		//Disable CSRF protection (stateless authentication)
-        		http.csrf(ServerHttpSecurity.CsrfSpec::disable)
-        		//Disable Basic Authentication
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)                
-              //Disable formLogin 
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((exchange, ex2) -> {
-                            exchange.getResponse().setStatusCode(org.springframework.http.HttpStatus.UNAUTHORIZED);
-                            return exchange.getResponse().setComplete();
-                        })
-                    )
-                //specfiy authorization rules (pathMatchers equivalent to  requestMatchers)
+        return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+   
                 .authorizeExchange(auth -> auth
-                		.pathMatchers("/auth/login").permitAll()
-                        .pathMatchers(HttpMethod.POST,"/students/register").permitAll() // UMS login/register
-                        .pathMatchers(HttpMethod.GET, "/students").hasAnyRole("ADMIN")
-                        .pathMatchers("/students/**").hasAnyRole("ADMIN","STUDENT")
+                	    .pathMatchers("/auth/**").permitAll()
+                	    .pathMatchers(HttpMethod.POST, "/students/register").permitAll()
+                	    .pathMatchers("/admin/**").hasRole("ADMIN")
+                	    .pathMatchers(HttpMethod.GET, "/students/*/exists").permitAll()
+                	    .pathMatchers("/students/**").hasAnyRole("ADMIN","STUDENT")
+                	    .pathMatchers("/projects/**").hasAnyRole("ADMIN","STUDENT")
+                	    .pathMatchers("/applications/**").hasAnyRole("ADMIN","STUDENT")
+                	    .pathMatchers("/direct-messages/**").hasAnyRole("ADMIN","STUDENT")
+                	   
+                	    .anyExchange().authenticated()
+                	)
 
-//                    	// only patient can book the appointment
-//        				.pathMatchers(HttpMethod.POST, "/appointments").hasRole("PATIENT")
-//        				//  patient or doctor can cancel the appointment
-//        				.pathMatchers(HttpMethod.PATCH, "/appointments").hasRole("PATIENT")
-//        				// admin | patient can check specific patient details, specific appointment details
-//        				.pathMatchers(HttpMethod.GET, "/patients/*","/appointments/patients/**").hasAnyRole("ADMIN","PATIENT")
-//        				// admin | doctor can check specific doc details, specific appointment details
-//        				.pathMatchers(HttpMethod.GET, "/doctors/*","/appointments/doctors/**").hasAnyRole("ADMIN","DOCTOR")
-//        				// only doctor can change appointment status to complete & add some diag tests
-//        				.pathMatchers(HttpMethod.POST, "/appointments/mark-complete-with-tests").hasRole("DOCTOR")
-        				// authenticate any other remaining request        		
-                        .anyExchange().authenticated()
-                        )
-                
-               .addFilterAt(customJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+
+
+                .addFilterAt(customJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 }

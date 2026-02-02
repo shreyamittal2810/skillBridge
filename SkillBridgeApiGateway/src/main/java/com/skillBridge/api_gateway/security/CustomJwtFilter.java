@@ -1,13 +1,12 @@
 package com.skillBridge.api_gateway.security;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,73 +19,78 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-@Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class CustomJwtFilter implements WebFilter {
-	private final JwtUtils jwtUtils;
-/*
- * filter method - Process the Web request and (optionally) delegate to the next WebFilter through the given WebFilterChain.
- */
-	/*
-	 *  ServerWebExchange 
-	 *  - Contract for an HTTP request-response interaction. Provides access to the HTTP
- * request and response and also exposes additional server-side processing
- * related properties and features such as request attributes.
-	 */
-	@Override
-	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-	    String authHeader = exchange.getRequest()
-	            .getHeaders()
-	            .getFirst(HttpHeaders.AUTHORIZATION);
+    private final JwtUtils jwtUtils;
 
-	    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-	        return chain.filter(exchange);
-	    }
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-	    String token = authHeader.substring(7);
+        String path = exchange.getRequest().getURI().getPath();
+        HttpMethod method = exchange.getRequest().getMethod();
 
-	    try {
-	        Claims claims = jwtUtils.validateToken(token);
-	        log.info("JWT CLAIMS = {}", claims);
-	        Long studentId = claims.get("studentId", Long.class);
+        log.info("Incoming request → {} {}", method, path);
 
-	        List<?> rawRoles = claims.get("roles", List.class);
+        // ✅ PUBLIC ENDPOINTS (JWT SKIPPED)
+        if (
+                path.startsWith("/auth/")
+                || (path.startsWith("/students/register") && method == HttpMethod.POST)
+                || (path.startsWith("/students/login") && method == HttpMethod.POST)
+                || (path.matches("/students/.*/exists") && method == HttpMethod.GET)
+        ) {
+            return chain.filter(exchange);
+        }
 
-	        List<GrantedAuthority> authorities =
-	                rawRoles.stream()
-	                        .map(r -> new SimpleGrantedAuthority(r.toString()))
-	                        .collect(Collectors.toList());
+        String authHeader = exchange.getRequest()
+                .getHeaders()
+                .getFirst(HttpHeaders.AUTHORIZATION);
 
-	        Authentication auth =
-	                new UsernamePasswordAuthenticationToken(
-	                        claims.getSubject(),
-	                        null,
-	                        authorities
-	                );
-	        
-	        ServerWebExchange mutatedExchange =
-	                exchange.mutate()
-	                        .request(
-	                                exchange.getRequest()
-	                                        .mutate()
-	                                        .header("X-User-Id", String.valueOf(studentId))
-	                                        .build()
-	                        )
-	                        .build();
+        // ❌ NO TOKEN
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
 
-	        return chain.filter(mutatedExchange)
-	                .contextWrite(
-	                        ReactiveSecurityContextHolder.withAuthentication(auth)
-	                );
+        try {
+            String token = authHeader.substring(7);
+            Claims claims = jwtUtils.validateToken(token);
 
-	    } catch (Exception e) {
-	        log.error("JWT filter error", e);
-	        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-	        return exchange.getResponse().setComplete();
-	    }
-	}
+            Long studentId = claims.get("studentId", Long.class);
+            String role = claims.get("role", String.class);
 
+            if (studentId == null || role == null) {
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                return exchange.getResponse().setComplete();
+            }
 
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            studentId,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+
+            ServerWebExchange mutatedExchange =
+                    exchange.mutate()
+                            .request(exchange.getRequest()
+                                    .mutate()
+                                    .header("X-USER-ID", String.valueOf(studentId))
+                                    .header("X-ROLE", role)
+                                    .build())
+                            .build();
+
+            return chain.filter(mutatedExchange)
+                    .contextWrite(
+                            ReactiveSecurityContextHolder.withAuthentication(authentication)
+                    );
+
+        } catch (Exception e) {
+            log.error("JWT validation failed", e);
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
+    }
 }

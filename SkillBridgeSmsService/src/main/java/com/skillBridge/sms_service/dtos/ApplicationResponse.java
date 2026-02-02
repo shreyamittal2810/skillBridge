@@ -16,7 +16,7 @@ public class ApplicationResponse {
     private Long applicationId;
     private Long projectId;
     private Long senderId;
-    private String messageText;
+    private String message;
     private ApplicationStatus applicationStatus;
     private LocalDateTime createdOn;
 }

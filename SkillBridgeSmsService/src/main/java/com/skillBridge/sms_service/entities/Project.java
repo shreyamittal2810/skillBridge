@@ -11,6 +11,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -57,4 +60,13 @@ public class Project extends BaseEntity {
     @NotNull(message = "Creator is required")
     @Column(nullable = false)
     private Long createdBy;
+
+    @OneToMany(
+    	    mappedBy = "project",
+    	    cascade = CascadeType.ALL,
+    	    orphanRemoval = true
+    	)
+    	private Set<ProjectMember> members = new HashSet<>();
+
+
 }

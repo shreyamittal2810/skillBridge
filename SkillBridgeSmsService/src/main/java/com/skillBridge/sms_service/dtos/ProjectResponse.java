@@ -23,4 +23,5 @@ public class ProjectResponse {
     private ProjectStatus status;
     private Set<String> requiredSkills;
     private Long createdBy;
+    private Set<Long> teamMembers;
 }

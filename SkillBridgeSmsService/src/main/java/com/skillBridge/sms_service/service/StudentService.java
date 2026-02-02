@@ -25,4 +25,6 @@ public interface StudentService {
 
     // 🔐 AUTH (ADD THIS)
     Student authenticate(String email, String password);
+
+	void assertStudentExists(Long id);
 }

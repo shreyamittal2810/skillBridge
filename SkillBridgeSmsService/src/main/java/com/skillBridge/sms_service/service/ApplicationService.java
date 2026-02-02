@@ -32,4 +32,7 @@ public interface ApplicationService {
 
     // ================= DELETE =================
     void delete(Long applicationId, Long studentId);
+
+ // Creator/Admin: view applications for a project
+    List<ApplicationResponse> getApplicationsForProject(Long projectId, Long requesterId);
 }

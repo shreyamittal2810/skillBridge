@@ -1,5 +1,4 @@
 package com.skillbridge.communication_service.controller;
-
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -16,74 +15,74 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.skillbridge.communication_service.dtos.DirectMessageRequest;
 import com.skillbridge.communication_service.dtos.DirectMessageResponse;
-import com.skillbridge.communication_service.dtos.DirectMessageUpdateRequest;
 import com.skillbridge.communication_service.entities.DirectMessage;
 import com.skillbridge.communication_service.service.MessageService;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/direct-messages")
-@RequiredArgsConstructor
+@RequestMapping("/direct-messages")
 public class DirectMessageController {
 
     private final MessageService messageService;
 
-    // CREATE
-    @PostMapping
-    public ResponseEntity<DirectMessageResponse> create(
-            @RequestHeader("X-Student-Id") Long senderStudentId,
-            @Valid @RequestBody DirectMessageRequest request) {
-
-        DirectMessage msg = new DirectMessage();
-        msg.setSenderStudentId(senderStudentId); // 🔐 from gateway
-        msg.setReceiverStudentId(request.getReceiverStudentId());
-        msg.setMessage(request.getMessage());
-
-        return new ResponseEntity<>(
-                map(messageService.sendDirectMessage(msg)),
-                HttpStatus.CREATED
-        );
+    public DirectMessageController(MessageService messageService) {
+        this.messageService = messageService;
     }
 
-    // READ (ALL for logged-in student)
-    @GetMapping("/me")
-    public List<DirectMessageResponse> getForMe(
-            @RequestHeader("X-Student-Id") Long studentId) {
+    // ---------------- CREATE ----------------
+    @PostMapping
+    public ResponseEntity<DirectMessageResponse> create(
+            @RequestHeader("X-USER-ID") Long senderStudentId,
+            @Valid @RequestBody DirectMessageRequest request
+    ) {
+        DirectMessage message = new DirectMessage();
+        message.setSenderStudentId(senderStudentId);
+        message.setReceiverStudentId(request.getReceiverStudentId());
+        message.setMessage(request.getMessage());
 
+        DirectMessage saved = messageService.sendDirectMessage(message);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapToResponse(saved));
+    }
+
+    // ---------------- READ (MY MESSAGES) ----------------
+    @GetMapping("/me")
+    public List<DirectMessageResponse> myMessages(
+            @RequestHeader("X-USER-ID") Long studentId
+    ) {
         return messageService.getDirectMessagesForStudent(studentId)
                 .stream()
-                .map(this::map)
+                .map(this::mapToResponse)
                 .toList();
     }
 
-    // READ (ONE)
-    @GetMapping("/{id}")
-    public DirectMessageResponse getById(@PathVariable Long id) {
-        return map(messageService.getDirectMessageById(id));
-    }
-
-    // UPDATE
+    // ---------------- UPDATE ----------------
     @PutMapping("/{id}")
     public DirectMessageResponse update(
             @PathVariable Long id,
-            @Valid @RequestBody DirectMessageUpdateRequest request) {
+            @RequestHeader("X-USER-ID") Long studentId,
+            @Valid @RequestBody DirectMessageRequest request
+    ) {
+        DirectMessage updated =
+                messageService.updateDirectMessage(id, studentId, request.getMessage());
 
-        return map(
-                messageService.updateDirectMessage(id, request.getMessage())
-        );
+        return mapToResponse(updated);
     }
 
-    // DELETE
+    // ---------------- DELETE ----------------
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        messageService.deleteDirectMessage(id);
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @RequestHeader("X-USER-ID") Long studentId
+    ) {
+        messageService.deleteDirectMessage(id, studentId);
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ REQUIRED mapper method (THIS FIXES THE ERROR)
-    private DirectMessageResponse map(DirectMessage m) {
+    // ---------------- MAPPER ----------------
+    private DirectMessageResponse mapToResponse(DirectMessage m) {
         DirectMessageResponse r = new DirectMessageResponse();
         r.setId(m.getId());
         r.setSenderStudentId(m.getSenderStudentId());

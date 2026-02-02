@@ -15,4 +15,6 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
             Long senderStudentId,
             Long receiverStudentId
     );
+    
+    List<DirectMessage> findByReceiverStudentId(Long receiverStudentId);
 }
