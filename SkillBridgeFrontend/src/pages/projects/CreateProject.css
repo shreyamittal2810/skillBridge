@@ -1,0 +1,93 @@
+.create-project-page {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.create-project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+}
+
+.form-error-box {
+    background: rgba(245, 87, 108, 0.1);
+    border: 1px solid rgba(245, 87, 108, 0.3);
+    color: var(--danger);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon-left {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.form-input.with-icon-left {
+    padding-left: 48px;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(102, 126, 234, 0.2);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    color: var(--primary);
+}
+
+.skill-chip-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.skill-chip-remove:hover {
+    background: rgba(245, 87, 108, 0.3);
+    color: var(--danger);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-loader {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}

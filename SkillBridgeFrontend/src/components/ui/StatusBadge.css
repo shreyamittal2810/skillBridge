@@ -1,0 +1,46 @@
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--radius-full);
+}
+
+.status-open {
+    background: rgba(56, 239, 125, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(56, 239, 125, 0.3);
+}
+
+.status-progress {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-completed {
+    background: rgba(102, 126, 234, 0.15);
+    color: var(--primary);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.status-pending {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-accepted {
+    background: rgba(56, 239, 125, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(56, 239, 125, 0.3);
+}
+
+.status-rejected {
+    background: rgba(245, 87, 108, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(245, 87, 108, 0.3);
+}

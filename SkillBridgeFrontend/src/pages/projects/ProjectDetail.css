@@ -1,0 +1,233 @@
+.project-detail-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    color: var(--primary);
+}
+
+.project-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.project-title-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.project-detail-title {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.project-owner {
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+.project-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.member-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: rgba(56, 239, 125, 0.1);
+    border: 1px solid rgba(56, 239, 125, 0.3);
+    border-radius: var(--radius-md);
+    color: var(--success);
+    font-weight: 500;
+}
+
+.project-detail-content {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 32px;
+}
+
+@media (max-width: 900px) {
+    .project-detail-content {
+        grid-template-columns: 1fr;
+    }
+
+    .project-detail-header {
+        flex-direction: column;
+    }
+}
+
+.project-main {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.detail-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+
+.section-heading {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.project-description {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.status-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Sidebar */
+.project-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+}
+
+.sidebar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.team-members {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.team-member {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: var(--bg-glass);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+}
+
+.team-member.owner {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.member-avatar {
+    font-size: 1.25rem;
+}
+
+.no-members {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 12px;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Modal actions */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* Applications List */
+.applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.application-item {
+    padding: 20px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.application-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.applicant-id {
+    font-weight: 600;
+}
+
+.application-message {
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.application-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.application-actions {
+    display: flex;
+    gap: 8px;
+}

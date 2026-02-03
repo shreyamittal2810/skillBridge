@@ -1,0 +1,33 @@
+.skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--primary);
+}
+
+.skill-tag-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: inherit;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.skill-tag-remove:hover {
+    background: rgba(245, 87, 108, 0.3);
+    color: var(--danger);
+}

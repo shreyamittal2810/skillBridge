@@ -1,0 +1,97 @@
+.my-applications-page {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.application-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    position: relative;
+    transition: var(--transition-normal);
+}
+
+.application-card:hover {
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.application-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.application-project h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.view-project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
+    font-size: 0.85rem;
+}
+
+.view-project-link:hover {
+    text-decoration: underline;
+}
+
+.application-message-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: var(--bg-glass);
+    border-radius: var(--radius-md);
+}
+
+.application-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.application-date {
+    color: var(--text-muted);
+}
+
+.status-message {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 24px;
+    right: 120px;
+}
+
+@media (max-width: 768px) {
+    .application-card-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .application-footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .delete-btn {
+        position: static;
+        margin-top: 16px;
+    }
+}
