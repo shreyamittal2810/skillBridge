@@ -1,5 +1,6 @@
 package com.skillBridge.sms_service.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,7 +21,7 @@ import lombok.Setter;
 @Table(
 	    name = "applications",
 	    uniqueConstraints = {
-	        @UniqueConstraint(columnNames = {"projectId", "senderId"})
+	        @UniqueConstraint(columnNames = {"project_id", "sender_id"})
 	    }
 	)
 
@@ -35,9 +36,11 @@ public class Application extends BaseEntity {
     private Long applicationId;
 
     @NotNull(message = "Project ID is required")
+    @Column(name = "project_id")
     private Long projectId;
 
     @NotNull(message = "Sender ID is required")
+    @Column(name = "sender_id")
     private Long studentId;
 
     @NotBlank(message = "Message cannot be empty")

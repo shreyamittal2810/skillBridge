@@ -15,6 +15,7 @@ import com.skillBridge.sms_service.entities.Project;
 import com.skillBridge.sms_service.entities.Role;
 import com.skillBridge.sms_service.entities.Student;
 import com.skillBridge.sms_service.repository.ApplicationRepository;
+import com.skillBridge.sms_service.repository.ProjectMemberRepository;
 import com.skillBridge.sms_service.repository.ProjectRepository;
 import com.skillBridge.sms_service.repository.StudentRepository;
 import com.skillBridge.sms_service.service.ApplicationService;
@@ -29,6 +30,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final ProjectRepository projectRepository;
     private final StudentRepository studentRepository;
+    private final ProjectMemberRepository projectMemberRepository;
 
     // ================= APPLY TO PROJECT =================
     @Override
@@ -134,6 +136,29 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         app.setStatus(request.getStatus());
+        
+        // If status is ACCEPTED, add the applicant to the project's team members
+        if (request.getStatus() == com.skillBridge.sms_service.entities.ApplicationStatus.ACCEPTED) {
+            System.out.println(">>> Application ACCEPTED for studentId=" + app.getStudentId() + " projectId=" + project.getProjectId());
+            
+            // Check if student is already a member using repository query
+            boolean alreadyMember = projectMemberRepository
+                    .existsByProject_ProjectIdAndStudentId(project.getProjectId(), app.getStudentId());
+            
+            System.out.println(">>> alreadyMember=" + alreadyMember);
+            
+            if (!alreadyMember) {
+                // Create a new ProjectMember and save directly
+                com.skillBridge.sms_service.entities.ProjectMember member = 
+                    new com.skillBridge.sms_service.entities.ProjectMember();
+                member.setStudentId(app.getStudentId());
+                member.setProject(project);
+                // Use repository to save directly instead of relying on cascade
+                com.skillBridge.sms_service.entities.ProjectMember savedMember = projectMemberRepository.save(member);
+                System.out.println(">>> SAVED new ProjectMember with id=" + savedMember.getId());
+            }
+        }
+        
         return mapToResponse(applicationRepository.save(app));
     }
 

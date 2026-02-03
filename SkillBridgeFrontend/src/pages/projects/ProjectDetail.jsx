@@ -25,8 +25,8 @@ const ProjectDetail = () => {
     const [error, setError] = useState('');
     const [memberDetails, setMemberDetails] = useState({});
 
-    const isOwner = project?.createdBy === user?.studentId;
-    const isMember = project?.teamMembers?.includes(user?.studentId);
+    const isOwner = Number(project?.createdBy) === Number(user?.studentId);
+    const isMember = project?.teamMembers?.some(m => Number(m) === Number(user?.studentId));
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -247,13 +247,13 @@ const ProjectDetail = () => {
                                 <span className="member-avatar">👑</span>
                                 <span>{memberDetails[project.createdBy]?.name || `Owner #${project.createdBy}`}</span>
                             </div>
-                            {project.teamMembers?.filter(m => m !== project.createdBy).map((memberId) => (
+                            {project.teamMembers?.filter(m => Number(m) !== Number(project.createdBy)).map((memberId) => (
                                 <div key={memberId} className="team-member">
                                     <span className="member-avatar">👤</span>
                                     <span>{memberDetails[memberId]?.name || `Member #${memberId}`}</span>
                                 </div>
                             ))}
-                            {project.teamMembers?.filter(m => m !== project.createdBy).length === 0 && (
+                            {project.teamMembers?.filter(m => Number(m) !== Number(project.createdBy)).length === 0 && (
                                 <p className="no-members">No other members yet</p>
                             )}
                         </div>

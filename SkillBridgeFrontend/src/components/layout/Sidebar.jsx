@@ -9,7 +9,8 @@ import {
     FiLogOut,
     FiPlus,
     FiUsers,
-    FiMessageCircle
+    FiMessageCircle,
+    FiShield
 } from 'react-icons/fi';
 import './Sidebar.css';
 
@@ -31,6 +32,7 @@ const Sidebar = () => {
         { path: '/my-applications', icon: FiClipboard, label: 'My Applications' },
         { path: '/messages', icon: FiMessageCircle, label: 'Messages' },
         { path: '/profile', icon: FiUser, label: 'Profile' },
+        { path: '/admin', icon: FiShield, label: 'Admin Panel' },
     ];
 
     return (

@@ -62,6 +62,7 @@ public class AdminServiceImpl implements AdminService {
             student.getName(),
             student.getEmail(),
             student.getCourse(),
+            student.getRole() != null ? student.getRole().name() : "STUDENT",
             student.getSkills().stream()
                 .map(ss -> ss.getSkill().name())
                 .collect(Collectors.toSet())

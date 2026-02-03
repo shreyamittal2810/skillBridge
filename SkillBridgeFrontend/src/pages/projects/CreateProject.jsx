@@ -11,26 +11,12 @@ const CreateProject = () => {
         description: '',
         requiredSkills: [],
     });
-    const [skillInput, setSkillInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
-    };
-
-    const handleAddSkill = (e) => {
-        if (e.key === 'Enter' && skillInput.trim()) {
-            e.preventDefault();
-            if (!formData.requiredSkills.includes(skillInput.trim())) {
-                setFormData({
-                    ...formData,
-                    requiredSkills: [...formData.requiredSkills, skillInput.trim()],
-                });
-            }
-            setSkillInput('');
-        }
     };
 
     const handleRemoveSkill = (skillToRemove) => {
@@ -99,34 +85,34 @@ const CreateProject = () => {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label">Required Skills (Press Enter to add) *</label>
-                        <div className="input-wrapper">
-                            <FiCode className="input-icon-left" />
-                            <input
-                                type="text"
-                                className="form-input with-icon-left"
-                                placeholder="e.g., React, Node.js, Python..."
-                                value={skillInput}
-                                onChange={(e) => setSkillInput(e.target.value)}
-                                onKeyDown={handleAddSkill}
-                            />
+                        <label className="form-label">Required Skills *</label>
+                        <div className="skills-checkbox-grid">
+                            {['JAVA', 'PYTHON', 'REACT', 'SPRING_BOOT', 'MYSQL'].map(skill => (
+                                <label
+                                    key={skill}
+                                    className={`skill-checkbox ${formData.requiredSkills.includes(skill) ? 'selected' : ''}`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.requiredSkills.includes(skill)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setFormData({
+                                                    ...formData,
+                                                    requiredSkills: [...formData.requiredSkills, skill],
+                                                });
+                                            } else {
+                                                setFormData({
+                                                    ...formData,
+                                                    requiredSkills: formData.requiredSkills.filter(s => s !== skill),
+                                                });
+                                            }
+                                        }}
+                                    />
+                                    <span>{skill.replace('_', ' ')}</span>
+                                </label>
+                            ))}
                         </div>
-                        {formData.requiredSkills.length > 0 && (
-                            <div className="skills-list">
-                                {formData.requiredSkills.map((skill, index) => (
-                                    <span key={index} className="skill-chip">
-                                        {skill}
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveSkill(skill)}
-                                            className="skill-chip-remove"
-                                        >
-                                            ×
-                                        </button>
-                                    </span>
-                                ))}
-                            </div>
-                        )}
                     </div>
 
                     <div className="form-actions">

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import projectService from '../services/projectService';
 import applicationService from '../services/applicationService';
-import { FiFolder, FiBriefcase, FiClipboard, FiPlus, FiArrowRight } from 'react-icons/fi';
+import { FiFolder, FiBriefcase, FiClipboard, FiPlus, FiArrowRight, FiShield } from 'react-icons/fi';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -161,6 +161,12 @@ const Dashboard = () => {
                         <FiClipboard className="quick-action-icon" />
                         <span>My Applications</span>
                     </Link>
+                    {user?.role?.toUpperCase?.() === 'ADMIN' && (
+                        <Link to="/admin" className="quick-action-card admin-action">
+                            <FiShield className="quick-action-icon" />
+                            <span>Admin Panel</span>
+                        </Link>
+                    )}
                 </div>
             </div>
         </div>

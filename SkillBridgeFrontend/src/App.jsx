@@ -13,6 +13,7 @@ import MyApplications from './pages/applications/MyApplications';
 import Profile from './pages/profile/Profile';
 import EditProfile from './pages/profile/EditProfile';
 import Messages from './pages/messages/Messages';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import Loader from './components/ui/Loader';
 
 // Protected Route Component
@@ -94,6 +95,7 @@ function App() {
             <Route path="/messages" element={<Messages />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Route>
 
           {/* Default Redirect */}

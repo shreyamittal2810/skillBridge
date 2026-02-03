@@ -42,12 +42,18 @@ public class StudentController {
         );
     }
 
-    // READ ONE
+    // READ ONE (by header - for current user)
     @GetMapping("/info")
     public ResponseEntity<StudentResponse> get(@RequestHeader("X-USER-ID") Long studentId) {
         
     	
     	return ResponseEntity.ok(studentService.get(studentId));
+    }
+    
+    // READ ONE (by path - for any student)
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.get(id));
     }
     
     @GetMapping("/{id}/exists")
@@ -58,6 +64,10 @@ public class StudentController {
 
 
     // READ ALL
+    @GetMapping("/all")
+    public ResponseEntity<List<StudentResponse>> getAll() {
+        return ResponseEntity.ok(studentService.getAll());
+    }
 
     // UPDATE FULL
     @PutMapping("/update")

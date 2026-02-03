@@ -63,7 +63,14 @@ public class StudentServiceImpl implements StudentService {
         );
     }
 
-
+    // READ ALL
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<StudentResponse> getAll() {
+        return studentRepository.findAll().stream()
+            .map(this::mapToResponse)
+            .collect(Collectors.toList());
+    }
 
     // UPDATE FULL
     @Override
@@ -131,6 +138,7 @@ public class StudentServiceImpl implements StudentService {
             student.getName(),
             student.getEmail(),
             student.getCourse(),
+            student.getRole() != null ? student.getRole().name() : "STUDENT",
             student.getSkills().stream()
                 .map(ss -> ss.getSkill().name())
                 .collect(Collectors.toSet())

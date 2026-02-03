@@ -1,4 +1,4 @@
-# Eclipse / STS
+echo "# Eclipse / STS
 .metadata/
 .classpath
 .project
@@ -17,3 +17,4 @@ target/
 # Environment variables
 .env
 application-local.properties
+**/application.properties"

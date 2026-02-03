@@ -14,7 +14,7 @@ public interface StudentService {
 
     // READ
     StudentResponse get(Long id);
-    
+    List<StudentResponse> getAll();
 
     // UPDATE
     StudentResponse update(Long id, StudentRegisterRequest request);

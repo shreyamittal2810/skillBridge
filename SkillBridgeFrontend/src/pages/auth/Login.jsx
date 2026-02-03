@@ -27,7 +27,13 @@ const Login = () => {
         const result = await login(formData.email, formData.password);
 
         if (result.success) {
-            navigate('/dashboard');
+            // Check if user is admin and redirect accordingly
+            const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            if (savedUser?.role?.toUpperCase?.() === 'ADMIN') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         } else {
             setError(result.error);
         }
@@ -102,6 +108,9 @@ const Login = () => {
 
                 <div className="auth-footer">
                     <p>Don't have an account? <Link to="/register">Create Account</Link></p>
+                    <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        🔐 Admin users login here too - you'll be redirected to Admin Panel
+                    </p>
                 </div>
             </div>
         </div>

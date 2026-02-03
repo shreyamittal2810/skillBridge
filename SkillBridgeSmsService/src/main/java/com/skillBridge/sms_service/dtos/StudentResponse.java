@@ -15,5 +15,6 @@ public class StudentResponse {
     private String name;
     private String email;
     private String course;
+    private String role;
     private Set<String> skills;
 }
